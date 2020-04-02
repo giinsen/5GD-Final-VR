@@ -44,14 +44,16 @@ namespace PathCreation.Examples
                 transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled, endOfPathInstruction);
                 transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled, endOfPathInstruction) - transform.right*0.5f;
                 isEjected = false;
-                //GetComponent<Rigidbody>().AddTorque(pathCreator.path.GetNormalAtDistance(distanceTravelled + 0.25f), ForceMode.Impulse);
             }
-            if (distanceTravelled >= pathCreator.path.length && !isEjected)
+            else if (distanceTravelled >= pathCreator.path.length && !isEjected)
             {
-                Debug.Log("ejection");
                 isEjected = true;
                 GetComponent<Rigidbody>().useGravity = true;
                 GetComponent<Rigidbody>().AddForce(transform.forward * 5f, ForceMode.Impulse);
+            }
+            else if(distanceTravelled <= 0 && GetComponent<Timeline>().timeScale < 0)
+            {
+                Destroy(this.gameObject);
             }
         }
 
