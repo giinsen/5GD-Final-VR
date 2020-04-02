@@ -19,6 +19,7 @@ namespace Chronos.Example
 			if (time.timeScale > 0)
 			{
 				transform.Rotate(time.deltaTime * Vector3.one * speed);
+				//transform.position = transform.position + (time.deltaTime * Vector3.one * speed);
 			}
 
 			// We don't need to take care of negative time scales,
