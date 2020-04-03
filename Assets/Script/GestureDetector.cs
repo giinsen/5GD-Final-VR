@@ -83,7 +83,6 @@ public class GestureDetector : MonoBehaviour
                 currentGesture = gesture;
             }
         }
-
         return currentGesture;     
     }
 }

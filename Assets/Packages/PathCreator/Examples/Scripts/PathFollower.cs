@@ -1,4 +1,5 @@
 ﻿using Chronos;
+using System.Collections;
 using UnityEngine;
 
 namespace PathCreation.Examples
@@ -17,6 +18,8 @@ namespace PathCreation.Examples
         private float delayTmp = 0f;
         private bool isEjected = false;
 
+        private Rigidbody rb;
+
         void Start() {
             if (pathCreator != null)
             {
@@ -25,6 +28,7 @@ namespace PathCreation.Examples
                 transform.position = pathCreator.path.GetPointAtDistance(0, endOfPathInstruction);
                 transform.rotation = pathCreator.path.GetRotationAtDistance(0, endOfPathInstruction);
             }
+            rb = GetComponent<Rigidbody>();
         }
 
         void Update()
@@ -38,25 +42,39 @@ namespace PathCreation.Examples
 
             distanceBeforeRotating += speed * GetComponent<Timeline>().deltaTime;
 
-            if (distanceTravelled < pathCreator.path.length && GetComponent<Timeline>().timeScale > 0)// && distanceBeforeRotating >= 0.5f)
+            if (distanceTravelled < pathCreator.path.length && GetComponent<Timeline>().timeScale > 0) //avance quand le temps est positif
             {
                 distanceBeforeRotating = 0f;
                 transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled, endOfPathInstruction);
-                transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled, endOfPathInstruction) - transform.right*0.5f;
-                isEjected = false;
+                transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled, endOfPathInstruction) - transform.right*0.25f;
+
+                if (isEjected)
+                    ReturnOnPath();
             }
-            else if (distanceTravelled >= pathCreator.path.length && !isEjected)
+            else if (distanceTravelled >= pathCreator.path.length && !isEjected) //arrivée au bout du chemin
             {
-                isEjected = true;
-                GetComponent<Rigidbody>().useGravity = true;
-                GetComponent<Rigidbody>().AddForce(transform.forward * 5f, ForceMode.Impulse);
+                EjectFromPath();
             }
-            else if(distanceTravelled <= 0 && GetComponent<Timeline>().timeScale < 0)
+            else if(distanceTravelled <= 0 && GetComponent<Timeline>().timeScale < 0) //retour et touche le point de spawn
             {
                 Destroy(this.gameObject);
             }
         }
 
+        private void EjectFromPath()
+        {
+            rb.useGravity = true;
+            isEjected = true;
+            rb.AddForce(transform.forward, ForceMode.Impulse);
+            //GetComponent<Collider>().isTrigger = false;
+        }
+
+        private void ReturnOnPath()
+        {
+            rb.useGravity = false;
+            isEjected = false;
+            //GetComponent<Collider>().isTrigger = true;
+        }
 
         // If the path changes during the game, update the distance travelled so that the follower's position on the new path
         // is as close as possible to its position on the old path

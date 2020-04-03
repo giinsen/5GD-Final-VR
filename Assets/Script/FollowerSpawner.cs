@@ -14,18 +14,23 @@ public class FollowerSpawner : MonoBehaviour
 
     void Start()
     {
-        
+        Spawn();
     }
 
     void Update()
     {
-        delaySpawnTmp += GameObject.FindObjectOfType<Timeline>().deltaTime;
+        delaySpawnTmp += GetComponent<Timeline>().deltaTime;
         delaySpawnTmp = Mathf.Clamp(delaySpawnTmp, 0, Mathf.Infinity);
         if (delaySpawnTmp >= delaySpawn)
         {
-            GameObject f = Instantiate(follower);
-            f.GetComponent<PathFollower>().pathCreator = pathCreator;
+            Spawn();
             delaySpawnTmp = 0f;
         }
+    }
+
+    private void Spawn()
+    {
+        GameObject f = Instantiate(follower);
+        f.GetComponent<Follower>().pathCreator = pathCreator;
     }
 }
