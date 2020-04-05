@@ -13,6 +13,7 @@ public class Follower : MonoBehaviour
     float distanceBeforeRotating;
 
     private bool isEjected = false;
+    private float distanceBeforeEjection = 0f;
 
     private Rigidbody rb;
     private Timeline timeline;
@@ -43,14 +44,16 @@ public class Follower : MonoBehaviour
 
         distanceBeforeRotating += speed * timeline.deltaTime;
 
-        if (distanceTravelled < pathCreator.path.length && timeline.timeScale > 0) //avance quand le temps est positif
+        if (distanceTravelled < pathCreator.path.length && timeline.timeScale > 0 && !isEjected) //avance quand le temps est positif et pas éjecté
         {
             distanceBeforeRotating = 0f;
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled, endOfPathInstruction);
-            transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled, endOfPathInstruction) - transform.right * 0.25f;
-
-            if (isEjected)
-                ReturnOnPath();
+            transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled, endOfPathInstruction) - transform.right * 0.25f;    
+        }
+        else if (distanceTravelled < distanceBeforeEjection && timeline.timeScale < 0 && isEjected) //le temps recule et arrive avant son point de collision
+        {
+            Debug.Log("return on path");
+            ReturnOnPath();
         }
         else if (distanceTravelled >= pathCreator.path.length && !isEjected) //arrivée au bout du chemin
         {
@@ -62,19 +65,30 @@ public class Follower : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.layer == 8) return; //path
+        EjectFromPath();
+    }
+
     private void EjectFromPath()
     {
-        rb.useGravity = true;
-        isEjected = true;
-        rb.AddForce(transform.forward * pathObject.ejectForce, ForceMode.Impulse);
-        //GetComponent<Collider>().isTrigger = false;
+        if (!isEjected && rb != null)
+        {
+            rb.useGravity = true;
+            rb.AddForce(transform.forward * pathObject.ejectForce, ForceMode.Impulse);
+            distanceBeforeEjection = distanceTravelled;
+            isEjected = true;
+        }        
     }
 
     private void ReturnOnPath()
     {
-        rb.useGravity = false;
-        isEjected = false;
-        //GetComponent<Collider>().isTrigger = true;
+        if (isEjected)
+        {
+            rb.useGravity = false;
+            isEjected = false;
+        }        
     }
 
     // If the path changes during the game, update the distance travelled so that the follower's position on the new path
