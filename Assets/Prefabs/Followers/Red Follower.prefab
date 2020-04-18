@@ -20,7 +20,7 @@ PrefabInstance:
     - target: {fileID: 7792393096410424566, guid: d8010ce5b10a08841b1de555c0ff792e,
         type: 3}
       propertyPath: _recordingInterval
-      value: 0.6
+      value: 0.13
       objectReference: {fileID: 0}
     - target: {fileID: 7792393097126656462, guid: d8010ce5b10a08841b1de555c0ff792e,
         type: 3}

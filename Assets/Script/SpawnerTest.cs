@@ -18,12 +18,12 @@ public class SpawnerTest : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        delayTmp += GetComponent<Timeline>().deltaTime;
-        if (delayTmp >= delay)
-        {
-            SpawnCube();
-            delayTmp = 0;
-        }
+        //delayTmp += GetComponent<Timeline>().deltaTime;
+        //if (delayTmp >= delay)
+        //{
+        //    SpawnCube();
+        //    delayTmp = 0;
+        //}
     }
 
     public void SpawnCube()

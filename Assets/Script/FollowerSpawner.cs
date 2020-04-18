@@ -30,7 +30,7 @@ public class FollowerSpawner : MonoBehaviour
 
     private void Spawn()
     {
-        GameObject f = Instantiate(follower);
+        GameObject f = Instantiate(follower, this.transform);
         f.GetComponent<Follower>().pathCreator = pathCreator;
     }
 }

@@ -42,24 +42,21 @@ public class Follower : MonoBehaviour
         distanceTravelled += speed * timeline.deltaTime;
         distanceTravelled = Mathf.Clamp(distanceTravelled, 0, Mathf.Infinity);
 
-        distanceBeforeRotating += speed * timeline.deltaTime;
-
-        if (distanceTravelled < pathCreator.path.length && timeline.timeScale > 0 && !isEjected) //avance quand le temps est positif et pas éjecté
+        if (distanceTravelled < pathCreator.path.length && !isEjected)// && timeline.timeScale > 0) //avance quand le temps est positif et pas éjecté
         {
-            distanceBeforeRotating = 0f;
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled, endOfPathInstruction);
-            transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled, endOfPathInstruction) - transform.right * 0.25f;    
+            transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled, endOfPathInstruction) - (transform.right * 0.25f);    
         }
         else if (distanceTravelled < distanceBeforeEjection && timeline.timeScale < 0 && isEjected) //le temps recule et arrive avant son point de collision
         {
-            Debug.Log("return on path");
             ReturnOnPath();
         }
         else if (distanceTravelled >= pathCreator.path.length && !isEjected) //arrivée au bout du chemin
         {
             EjectFromPath();
         }
-        else if (distanceTravelled <= 0 && timeline.timeScale < 0) //retour et touche le point de spawn
+        
+        if (distanceTravelled <= 0 && timeline.timeScale < 0) //retour et touche le point de spawn
         {
             Destroy(this.gameObject);
         }
@@ -88,7 +85,12 @@ public class Follower : MonoBehaviour
         {
             rb.useGravity = false;
             isEjected = false;
-        }        
+        }       
+    }
+
+    public void Remove()
+    {
+        Destroy(this.gameObject);
     }
 
     // If the path changes during the game, update the distance travelled so that the follower's position on the new path
